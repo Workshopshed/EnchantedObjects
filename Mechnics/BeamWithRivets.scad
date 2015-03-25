@@ -23,7 +23,7 @@ module beam(length,width,height,hole) {
 module rivet(length,diameter) {
 //Length excludes that of clips, it's the lenght of the part that passes through
 		head = 2.5;
-		hdiameter = diameter + 1.5;
+		hdiameter = diameter + 1;
 		difference() {
 			union() {
 				cylinder(d=diameter,h=length+clearance,$fn=20);
