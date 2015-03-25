@@ -26,9 +26,9 @@ module rivet(length,diameter) {
 		hdiameter = diameter + 1;
 		difference() {
 			union() {
-				cylinder(d=diameter,h=length+clearance,$fn=20);
+				cylinder(d=diameter,h=length+clearance,$fn=40);
 				translate([0,0,length-head+clearance])
-					cylinder(r2=(diameter/2),r1=(hdiameter/2),h=head,$fn=20);	
+					cylinder(r2=(diameter/2),r1=(hdiameter/2),h=head,$fn=40);	
 				}
 			translate([-diameter,-diameter/4,length-head-2])
 				cube([diameter*2,diameter/2,head*3]);
