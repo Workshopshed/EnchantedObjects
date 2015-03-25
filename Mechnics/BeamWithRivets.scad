@@ -30,8 +30,14 @@ module rivet(length,diameter) {
 				translate([0,0,length-head+clearance])
 					cylinder(r2=(diameter/2),r1=(hdiameter/2),h=head,$fn=20);	
 				}
-				translate([-diameter,-diameter/4,length-head-2])
-					cube([diameter*2,diameter/2,head*3]);
+			translate([-diameter,-diameter/4,length-head-2])
+				cube([diameter*2,diameter/2,head*3]);
+			
+				translate([diameter/2-clearance,-diameter,length-head+clearance-0.1])
+					cube([diameter/2,diameter*2,head*3]);
+			
+				translate([-diameter+clearance,-diameter,length-head+clearance-0.1])
+					cube([diameter/2,diameter*2,head*3]);
 		}
 		
 }
