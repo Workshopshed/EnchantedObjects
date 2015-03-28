@@ -135,6 +135,7 @@ for (i=[1:3]){
 translate([0,85+(i*15),0])
 		plate(20,8,2,4,2);
 }
+//todo: see why washers are not on base
 for (i=[1:7]){
 	translate([45,i*15,0])
 		washer(8,1.5,2);
@@ -144,8 +145,8 @@ for (i=[1:7]){
 plate(20,8,2,4,2);
 translate([0,20,0])
 	beam2(25,8,2,4);
-translate([10,40,0])
-	washer(8,1.5,2);	
+//translate([10,40,0])
+	//washer(8,1.5,2);	
 
 
 
