@@ -71,6 +71,7 @@ module beam2(length,width,height,hole) {
 module beam3(length,width,height,hole,screw) {
 
 		//Body
+		difference() {
 		union() {
 			hull(){
 			cylinder(d=width,h=height,center=true);
@@ -80,14 +81,18 @@ module beam3(length,width,height,hole,screw) {
 				cylinder(d=width,h=height,center=true);	
 			};
 			//Magnet carrier
-			translate([length/2,0,height])
-				pin(height,10,6);
+			translate([length/2,0,0])
+				cylinder(d=11,height*1.5,centre=true);
 			//Pins
 			translate([0,0,height]){
 				pin(height+clearance,hole,screw);
 				translate([length,0,0])
 					pin(height+clearance,hole,screw);
 			}
+		}
+		//hole for magnet
+		translate([length/2,0,-height])
+			cylinder(d=6+clearance,h=2.5,centre=true);
 	}
 }
 
@@ -144,12 +149,13 @@ for (i=[1:7]){
 		washer(8,1.5,2);
 }
 
-//Test print
-//plate(40,8,2,4,2);
-//translate([0,20,0])
-//	beam2(25,8,2,4);
-//translate([10,40,0])
-	//washer(8,1.5,2);	
 
+/*
+//Test print
+translate([0,60,0])
+		beam3(30,8,2,4,2);
+translate([0,80,0])
+		beam3(30,8,2,4,2);
+*/
 
 
