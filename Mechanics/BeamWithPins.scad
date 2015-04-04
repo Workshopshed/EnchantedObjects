@@ -96,7 +96,7 @@ module beam3(length,width,height,hole,screw) {
 	}
 }
 
-module plate(length,width,height,hole,screw) {
+module plate(length,width,height,pin,pinpos,hole,screw) {
 
 		//Body
 		difference() {
@@ -107,7 +107,7 @@ module plate(length,width,height,hole,screw) {
 				cylinder(d=width,h=height,center=true);	
 			};
 			//Pins
-			translate([length/2,0,height]){
+			translate([pinpos,0,pin]){
 				pin(height+clearance,hole,screw);
 			}
 		}
@@ -137,11 +137,11 @@ translate([0,60,0])
 translate([0,80,0])
 		beam3(30,8,2,4,2);
 for (i=[1:2]){
-translate([0,85+(i*15),0])
-		plate(20,8,2,4,2);
+translate([0,85+(i*15),0.5])
+		plate(25,8,2.5,2,10,4,2);
 }
-translate([0,85+(3*15),0])
-	plate(40,8,2,4,2);
+translate([0,85+(3*15),0.5])
+	plate(30,8,2.5,2,12,4,2);
 
 //Washers thinner so need moving down to base
 for (i=[1:7]){
