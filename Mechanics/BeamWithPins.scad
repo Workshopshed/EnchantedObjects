@@ -141,7 +141,7 @@ translate([0,85+(i*15),0.5])
 		plate(25,8,2.5,2,10,4,2);
 }
 translate([0,85+(3*15),0.5])
-	plate(30,8,2.5,2,12,4,2);
+	plate(30,12,2.5,2,12,4,2);
 
 //Washers thinner so need moving down to base
 for (i=[1:7]){
@@ -152,10 +152,12 @@ for (i=[1:7]){
 
 /*
 //Test print
-translate([0,60,0])
-		beam3(30,8,2,4,2);
-translate([0,80,0])
-		beam3(30,8,2,4,2);
+for (i=[1:2]){
+translate([0,85+(i*15),0.5])
+		plate(25,8,2.5,2,10,4,2);
+}
+translate([0,85+(3*15),0.5])
+	plate(30,12,2.5,2,12,4,2);
 */
 
 
