@@ -1,4 +1,4 @@
-#include <VarSpeedServo.h>
+#include "VarSpeedServo.h"
 
 /*
 Sweep
@@ -13,8 +13,9 @@ VarSpeedServo myservo; // create servo object to control a servo
 // a maximum of eight servo objects can be created
 const int servoPin = 9; // the digital pin used for the servo
 void setup() {
+  myservo.write(0,30,false); // set the postion and speed before attaching to avoid a high speed "twitch"
   myservo.attach(servoPin); // attaches the servo on pin 9 to the servo object
-  myservo.write(0,30,true); // set the intial position of the servo, as fast as possible, wait until done
+  myservo.write(0,30,true); // set the intial position of the servo, slow, wait until done
 }
 void loop() {
   myservo.write(75,10,true); // move the servo to 180, max speed, wait until done
