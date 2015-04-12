@@ -1,4 +1,3 @@
-//Hull test
 clearance=0.6;
 
 module beam(length,width,height,hole) {
@@ -112,9 +111,10 @@ module plate(length,width,height,pin,pinpos,hole,screw) {
 			}
 		}
 		//Holes
-		cylinder(d=screw+clearance/2,h=height*1.5,center=true,$fn=20);
-		translate([length,0,0])
-			cylinder(d=screw+clearance/2,h=height*1.5,center=true,$fn=20);
+		translate([0,0,0.7])
+			#cylinder(d=screw+clearance/2,h=height*1.5,center=true,$fn=20);
+		translate([length,0,0.7])
+			#cylinder(d=screw+clearance/2,h=height*1.5,center=true,$fn=20);
 		}
 }
 
@@ -122,7 +122,8 @@ module washer(diameter,height,hole)
 {
 	difference() {
 		cylinder(d=diameter,h=height,center=true,$fn=40);
-		cylinder(d=hole+clearance,h=height*1.2,center=true,$fn=40);
+		translate([0,0,0.7])
+			cylinder(d=hole+clearance,h=height*1.2,center=true,$fn=40);
 	}
 }
 
@@ -143,12 +144,12 @@ translate([0,85+(i*15),0.5])
 translate([0,85+(3*15),0.5])
 	plate(30,12,2.5,2,12,4,2);
 
+
 //Washers thinner so need moving down to base
 for (i=[1:7]){
 	translate([45,10+i*15,-0.5])
 		washer(8,1.5,2);
 }
-
 
 /*
 //Test print
@@ -159,5 +160,6 @@ translate([0,85+(i*15),0.5])
 translate([0,85+(3*15),0.5])
 	plate(30,12,2.5,2,12,4,2);
 */
+
 
 
