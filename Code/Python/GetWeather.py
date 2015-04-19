@@ -1,0 +1,2 @@
+print 'Getting Weather'
+print ''
