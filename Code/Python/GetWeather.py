@@ -89,7 +89,7 @@ def map_code(code):
 
 
 def parse_weather(json):
-    text = json['query']['results']['channel']['item']['condition']['text']
+    text = json['query']['results']['channel']['item']['condition']['text'].replace(",", " ")
     code = map_code(json['query']['results']['channel']['item']['condition']['code'])
     temp = json['query']['results']['channel']['item']['condition']['temp']
     return {'text': text, 'code': code, 'temp': float(temp)}
