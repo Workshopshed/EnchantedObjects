@@ -3,7 +3,9 @@ OPENSSL=/usr/bin/openssl
 CERTDIR=/etc/ssl/certs
 
 opkg update
-opkg install ca-certificates
+#opkg install ca-certificates
+wget http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/base/ca-certificates_20141019_ar71xx.ipk  
+opkg install ca-certificates_20141019_ar71xx.ipk 
 
 # Install openssl-util if need
 [ ! -f ${OPENSSL} ] && opkg update && opkg install openssl-util
@@ -24,5 +26,4 @@ for CERTFILE in ${CERTDIR}/*; do
 	ln -s ${CERTFILE##*/} ${CERTDIR}/${HASH}.${SUFFIX}
 done
 
-
-
+rm ca-certificates_20141019_ar71xx.ipk
