@@ -1,5 +1,7 @@
-import requests, json, sys, urllib, urlparse
-
+# For Curl version
+from StringIO import StringIO
+import pycurl
+import json, sys, urllib, urlparse
 
 def get_location():
     with open('/etc/WeatherAPI.conf', 'r') as f:
@@ -22,13 +24,14 @@ def build_url(location):
 
     return urlparse.urlunparse(url_parts)
 
-
 def call_api(url):
-    r = requests.get(url, timeout=(10, 60))  # Connection timeout and read timeout
-    if r.status_code != 200:
-        raise RuntimeError('API Call Failed(%s)' % r.status_code)
-    return r
-
+    r = StringIO()
+    c = pycurl.Curl()
+    c.setopt(c.URL, url)
+    c.setopt(c.WRITEFUNCTION, r.write)
+    c.perform()
+    c.close()
+    return r.getvalue()
 
 def map_code(code):
     # Map condition codes to expected precipitation
@@ -100,7 +103,7 @@ def main():
         loc = get_location()
         weather_url = build_url(loc)
         r = call_api(weather_url)
-        j = json.loads(r.content)
+        j = json.loads(r)
         weather = parse_weather(j)
 
         print 'OK!,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
