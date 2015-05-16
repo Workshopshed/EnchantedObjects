@@ -28,6 +28,8 @@ def call_api(url):
     r = StringIO()
     c = pycurl.Curl()
     c.setopt(c.URL, url)
+    c.setopt(c.CONNECTTIMEOUT, 10)
+    c.setopt(c.TIMEOUT, 60)
     c.setopt(c.WRITEFUNCTION, r.write)
     c.perform()
     c.close()
