@@ -1,0 +1,10 @@
+Current WiFi configuration
+SSID: PlusnetWirelessAC70BC
+Mode: Client
+Signal: 60%
+Encryption method: WPA2 PSK (NONE)
+Interface name: wlan0
+Active for: 45 minutes
+IP address: 192.168.1.100/255.255.255.0
+MAC address: 90:A2:DA:F2:11:A4
+RX/TX: 2198/517 KBs
