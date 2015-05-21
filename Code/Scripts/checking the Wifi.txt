@@ -1,0 +1,36 @@
+root@EnchantedCottage:~# /usr/bin/pretty-wifi-info.lua
+
+
+Current WiFi configuration
+SSID: PlusnetWirelessAC70BC
+Mode: Client
+Signal: 60%
+Encryption method: WPA2 PSK (NONE)
+Interface name: wlan0
+Active for: 45 minutes
+IP address: 192.168.1.100/255.255.255.0
+MAC address: 90:A2:DA:F2:11:A4
+RX/TX: 2198/517 KBs
+
+
+
+
+There's also a library for python
+	 pip install netifaces
+
+as per usual, some obtuse error
+
+building 'netifaces' extension
+    mips-openwrt-linux-uclibc-gcc -fno-strict-aliasing -Os -pipe -mips32r2 -mtune=mips32r2 -fno-caller-saves -fhonour-copts -Wno-error=unused-but-set-variable -msoft-float -DNDEBUG -Os -pipe -mips32r2 -mtune=mips32r2 -fno-caller-saves -fhonour-copts -Wno-error=unused-but-set-variable -msoft-float -fPIC -DNETIFACES_VERSION=0.10.4 -I/usr/include/python2.7 -c netifaces.c -o build/temp.linux-mips-2.7/netifaces.o
+    as: can't load library 'libopcodes-2.24.so'
+    netifaces.c:185:6: error: #error You need to add code for your platform.
+     #    error You need to add code for your platform.
+          ^
+    error: command 'mips-openwrt-linux-uclibc-gcc' failed with exit status 1
+
+    ----------------------------------------
+    Command "/usr/bin/python -c "import setuptools, tokenize;__file__='/tmp/pip-build-GpE8w7/netifaces/setup.py';exec(compile(getattr(tokenize, 'open', open)(__file__).read().replace('\r\n', '\n'), __file__, 'exec'))" install --record /tmp/pip-9OVeFW-record/install-record.txt --single-version-externally-managed --compile" failed with error code 1 in /tmp/pip-build-GpE8w7/netifaces
+
+
+
+Looks like it will be better to read the data from pretty-wifi-info.lua and use that
