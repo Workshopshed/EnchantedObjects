@@ -1,7 +1,5 @@
-# Simple Process test.
+# Get the Wifi Status into a dictionary
 import subprocess
-
-# check if parse works ok on Yún
 from parse import *
 
 def parselines(s):
@@ -13,12 +11,17 @@ def parselines(s):
             d[p[0]] = p[1]
     return d
 
-# Need to swap with pretty print
-# Need to see what happens when no wifi connected
-w = subprocess.check_output(["type", "WifiExample.txt"],
-                    shell=True)  # Shell needed for type command, should not be needed for running Prettyprint
+def getWifiStatus():
+    #w = subprocess.check_output(["type", "WifiExample.txt"], shell=True)  # Shell needed for type command, should not be needed for running Prettyprint
+    w = subprocess.check_output("/usr/bin/pretty-wifi-info.lua")
+    p = parselines(w)
 
-p = parselines(w)
+    for key in ('Mode','Interface name','SSID','Signal','Encryption method','Active for','IP address','MAC address','RX/TX'):
+        p.setdefault(key,'Unknown')
+
+    return p
+
+p = getWifiStatus()
 
 print p['Mode']
 print p['Interface name']
@@ -29,9 +32,3 @@ print p['Active for']
 print p['IP address']
 print p['MAC address']
 print p['RX/TX']
-
-# Also see http://www.tutorialspoint.com/python/python_command_line_arguments.htm
-
-
-
-
