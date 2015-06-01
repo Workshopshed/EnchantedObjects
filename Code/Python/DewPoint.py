@@ -1,3 +1,4 @@
+# Calculate the dew point based on temperature and humidity
 # http://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
 
 def calc_dew(T, RH):
