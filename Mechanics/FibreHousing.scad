@@ -18,9 +18,15 @@ module housing(thickness)
 	translate([30.5,-7.5,-1])
 		rotate([0,0,45])
 		cube([10,5,thickness+2]);
-	translate([-12,0.5,-1])
+	translate([3.5,-7.5,-1])
+		rotate([0,0,45])
+		cube([10,5,thickness+2]);		
+	translate([-5.5,0.5,-1])
 		rotate([0,0,-45])
-		cube([15,9.5,thickness+2]);
+		cube([10,5,thickness+2]);
+	translate([9.5,0.5,-1])
+		rotate([0,0,-45])
+		cube([10,5,thickness+2]);
 	translate([24,9.5,-1])
 		rotate([0,0,135])
 		cube([10,5,thickness+2]);
@@ -34,8 +40,8 @@ module housing(thickness)
 	s = 11.0/7.0;
 	for(i = [0:1:6]) 
 		rotate([-12,0,0])
-		translate([17+(i*s),2,-1])
-		cube([0.5,1,thickness+3]);
+		translate([17+(i*s),1,-1])
+		cube([1,2.5,thickness+3]);
 	}
 }
 
