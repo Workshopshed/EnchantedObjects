@@ -40,5 +40,5 @@ module frame(l,h){
 	}
 }
 
-frame(20,2);
+frame(15,2);
 
