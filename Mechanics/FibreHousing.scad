@@ -33,16 +33,21 @@ module housing(thickness)
 
 	//Mounting Holes
 	translate([3,3,thickness/2])
-		cylinder(d=3.2,h=thickness+2,center=true,$fn=25);
+		cylinder(d=3.7,h=thickness+2,center=true,$fn=25);
 	translate([30,3,thickness/2])
-		cylinder(d=3.2,h=thickness+2,center=true,$fn=25);
+		cylinder(d=3.7,h=thickness+2,center=true,$fn=25);
 	//Light holes
 	s = 11.0/7.0;
 	for(i = [0:1:6]) 
 		rotate([-12,0,0])
 		translate([17+(i*s),1,-1])
 		cube([1,2.5,thickness+3]);
+	
+	//Knockout for light housing
+	translate([17,1,-1])
+		cube([10.5,3.2,2]);
 	}
 }
 
-housing(6);
+rotate([0,180,0])
+	housing(6);
