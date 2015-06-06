@@ -5,12 +5,15 @@ module panel(w,l,height){
 		cube([w+2,l-20,height]);				
 	//Light holes
 	for(i = [0:1:3]) {	
-		translate([w/2,25 + i*5,height/2])
-			cylinder(d=3.2,h=height+2,center=true,$fn=25);		
+		translate([w/2,70 + i*4,height/2])
+			cylinder(d=2.5,h=height+2,center=true,$fn=25);		
 	}
     //Switch
-	translate([w/2,15,height/2])
-		cylinder(d=5.2,h=height+2,center=true,$fn=25);
+	translate([w/2,16,height/2])
+		cylinder(d=7,h=height+2,center=true,$fn=25);
+	translate([w/2,27,height/2])
+		cylinder(d=7,h=height+2,center=true,$fn=25);
+	
 	
 	//Mounting holes
 	translate([w/2,5,height/2])
@@ -22,6 +25,5 @@ module panel(w,l,height){
 	}
 }
 
-//todo: Adjust length to fit house
 rotate([0,180,0])
-	panel(10,100,6);
+	panel(12,99,6);
