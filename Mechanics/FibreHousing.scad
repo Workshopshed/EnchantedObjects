@@ -44,8 +44,8 @@ module housing(thickness)
 		cube([1,2.5,thickness+3]);
 	
 	//Knockout for light housing
-	translate([17,1,-1])
-		cube([10.5,3.2,2]);
+	translate([16.75,1,-1])
+		cube([11,3.1,2]);
 	}
 }
 
