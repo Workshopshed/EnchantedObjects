@@ -9,9 +9,9 @@ module panel(w,l,height){
 			cylinder(d=2.5,h=height+2,center=true,$fn=25);		
 	}
     //Switch
-	translate([w/2,16,height/2])
+	translate([w/2,17,height/2])
 		cylinder(d=7,h=height+2,center=true,$fn=25);
-	translate([w/2,27,height/2])
+	translate([w/2,29,height/2])
 		cylinder(d=7,h=height+2,center=true,$fn=25);
 	
 	
