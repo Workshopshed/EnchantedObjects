@@ -64,9 +64,6 @@
 
    stop() - stops the servo at the current position
 
-   sequencePlay(sequence, sequencePositions); // play a looping sequence starting at position 0
-   sequencePlay(sequence, sequencePositions, loop, startPosition); // play sequence with number of positions, loop if true, start at position
-   sequenceStop(); // stop sequence at current position
 
  */
 
@@ -165,9 +162,6 @@ public:
   int readMicroseconds();            // returns current pulse width in microseconds for this servo (was read_us() in first release)
   bool attached();                   // return true if this servo is attached, otherwise false 
 
-  uint8_t sequencePlay(servoSequencePoint sequenceIn[], uint8_t numPositions, bool loop, uint8_t startPos);
-  uint8_t sequencePlay(servoSequencePoint sequenceIn[], uint8_t numPositions); // play a looping sequence starting at position 0
-  void sequenceStop(); // stop movement
 private:
    uint8_t servoIndex;               // index into the channel data for this servo
    int8_t min;                       // minimum is this value times 4 added to MIN_PULSE_WIDTH    

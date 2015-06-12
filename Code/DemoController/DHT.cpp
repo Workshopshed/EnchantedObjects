@@ -90,7 +90,6 @@ float DHT::computeHeatIndex(float tempFahrenheit, float percentHumidity) {
           -0.00000199 * pow(tempFahrenheit, 2) * pow(percentHumidity, 2);
 }
 
-
 boolean DHT::read(void) {
   uint8_t laststate = HIGH;
   uint8_t counter = 0;

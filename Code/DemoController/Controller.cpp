@@ -4,29 +4,35 @@ CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led){
   _dht = dht;
   _servo = servo;
   _led = led;
-  pinMode(A5, OUTPUT);
-  pinMode(powerpin, OUTPUT);
-  //Todo: Add in the handshake pin
+  position = 3; // Middle position
 }
 
 void CONTROLLER::begin() {
-    position = 3; // Middle position
-    
-    powerOn();
-    lininoOn();
+    pinMode(LininoPin, OUTPUT);
+    pinMode(powerpin, OUTPUT);
+    //Todo: Add in the handshake pin    
+
     
     //Todo: Setup serial port
 }
 
 void CONTROLLER::run(void) {
+    //Todo: Determine if we want to sleep or stay awake
+    lininoOn();
+    powerOn();
     readLocalWeather();
     readNetWeather();
-    // Move servo
-    // Turn on Light
+    moveServo();
+    setLED();
+    
+    //Todo: Timeout and go to sleep
 }
 
 void CONTROLLER::readLocalWeather() {
-  // Todo: Check DHT
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    localhumidity = _dht->readHumidity();
+    localtemp = _dht->readTemperature();
 };
 
 void CONTROLLER::readNetWeather() {
@@ -76,19 +82,24 @@ bool CONTROLLER::parseWeather(String weather) {
 
 
 void CONTROLLER::powerOn() {
-  digitalWrite(powerpin, HIGH);    // sets the MOSFET on
+    digitalWrite(powerpin, HIGH);    // sets the MOSFET on
+    _servo->attach(servoPin);
+    _dht->begin();                  //Todo: Check we can run these more than once
+    _led->begin();
 }
 
 void CONTROLLER::powerOff() {
-  digitalWrite(powerpin, LOW);    // sets the MOSFET off
+    _servo->stop();
+    _servo->detach();
+    digitalWrite(powerpin, LOW);    // sets the MOSFET off
 }
 
 void CONTROLLER::lininoOn() {
-  digitalWrite(A5, LOW);    // sets the Linino off
+    digitalWrite(LininoPin, LOW);    // sets the Linino off
 }
 
 void CONTROLLER::lininoOff() {
-  digitalWrite(A5, HIGH);    // sets the Linino on
+    digitalWrite(LininoPin, HIGH);    // sets the Linino on
 }
 
 bool CONTROLLER::lininoRunning() {
@@ -98,7 +109,11 @@ bool CONTROLLER::lininoRunning() {
 }
 
 void CONTROLLER::moveServo() {
-  // Move servo to correct position
+    int p = position;
+    if (p == 0) { p = 3; }           // Default to middle position
+    p = constrain(position, 1, 5);   // Ensure position valid
+    int degrees = map(p,1,5,50,100); // Move servo to correct position 50 to 100 degrees
+    _servo->write(degrees,10,false); // Slow move, don't wait
 }
 
 void CONTROLLER::setLED() {
@@ -107,4 +122,6 @@ void CONTROLLER::setLED() {
 
 void CONTROLLER::sleep() {
   // Sleep the ATMega
+  // Need to check servo has finished moving before sleeping, perhaps put that into the run method rather than the sleep call
+  
 }
