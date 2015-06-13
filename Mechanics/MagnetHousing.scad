@@ -1,5 +1,6 @@
 module housing(radius,height,curve_radius) {
 	detail = 70;
+	fit = -0.2;
 	doughnut = radius-curve_radius;
 	cylinder_height = height - curve_radius;
 	difference() {
@@ -8,7 +9,6 @@ module housing(radius,height,curve_radius) {
 			translate([doughnut, 0, 0])
 				circle(curve_radius, $fn=detail);
 		//Peg
-		fit = -0.25;
 		pegh = 1;
 		pegr = 3+fit;
 		translate([0, 0, cylinder_height + (pegh/2)])
@@ -20,7 +20,7 @@ module housing(radius,height,curve_radius) {
 		translate([0, 0, -curve_radius/2])
 			cylinder(h = curve_radius, r=doughnut, $fn=detail, center = true);
 		}
-	magnetr = 3;
+	magnetr = 4+fit;
 	magneth = 1;
 	//Hole for magnet
 	translate([0, 0, (magneth/2)-(curve_radius)-0.5])
