@@ -13,8 +13,8 @@ module spacer(size, height,hole) {
 	}
 }
 
-translate([-1.5,1.7,0])	
-	cube([3,6,0.3]);
+translate([-4,-4,0])	
+	cube([8,28,0.4]);
 translate([-1.5,12.5,0])	
 	cube([3,5.5,0.3]);
 translate([0,0,5.5])	
