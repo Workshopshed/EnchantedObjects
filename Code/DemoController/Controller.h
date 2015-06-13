@@ -1,6 +1,7 @@
 #include "DHT.h"
 #include "infineonrgb.h"
 #include "VarSpeedServo.h"
+#include "LowPower.h"
 
 class CONTROLLER {
  private:
@@ -13,7 +14,6 @@ class CONTROLLER {
   InfineonRGB *_led;
   const int powerpin = 11;
   const int servoPin = 9;
-  const int knockPin = 12;
   const int LininoPin = A5;
   byte position;
   void powerOn();
@@ -32,5 +32,5 @@ class CONTROLLER {
   CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led);
   void begin();
   void run(void);
-
+  void wake();
 };

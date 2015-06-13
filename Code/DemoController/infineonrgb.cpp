@@ -178,6 +178,9 @@ void InfineonRGB::SetColor(uint8_t Colour){
 		case Red: 
 			I2CWRITE6BYTES(ADDRESS, INTENSITY_RGB, 0xFFF, 0x0, 0x0);
 			break;
+                case Orange:
+                        I2CWRITE6BYTES(ADDRESS, INTENSITY_RGB, 0xFFF, 0x8C0, 0x0);
+			break;
 		case Maroon: 
 			I2CWRITE6BYTES(ADDRESS, INTENSITY_RGB, 0x800, 0x0, 0x0);
 			break;

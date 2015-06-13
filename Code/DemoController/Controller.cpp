@@ -1,4 +1,6 @@
 #include "Controller.h"
+//Todo: Drop process, use serial
+#include <Process.h>
 
 CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led){
   _dht = dht;
@@ -12,8 +14,8 @@ void CONTROLLER::begin() {
     pinMode(powerpin, OUTPUT);
     //Todo: Add in the handshake pin    
 
-    
     //Todo: Setup serial port
+    
 }
 
 void CONTROLLER::run(void) {
@@ -36,13 +38,18 @@ void CONTROLLER::readLocalWeather() {
 };
 
 void CONTROLLER::readNetWeather() {
-  // Todo: Read internet weather
-  // Request weather, pass in the local conditions
-  
+  // Todo: Swap this technique to use serial rather than process
+  Process p;        
+  p.begin("python");  
+  p.addParameter("/mnt/sda1/Python/GetWeather.py"); 
+  p.addParameter("-r " + String(localhumidity));
+  p.addParameter("-t " + String(localtemp));
+  p.run();      // Run the process and wait for its termination
+  String weather = p.readStringUntil('\n');
+
   // Read weather over /dev/ttyATH0<->Serial1
-  // String weather = Serial1.readStringUntil('\n');
   
-  String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
+  //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
   if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values
   if (!parseWeather(weather)) { return; } // No change in weather
 
@@ -86,6 +93,9 @@ void CONTROLLER::powerOn() {
     _servo->attach(servoPin);
     _dht->begin();                  //Todo: Check we can run these more than once
     _led->begin();
+    _led->SetCurrentRGB(1,1,1);
+    _led->SetOffTimesRGB(0x50, 0x52,0x50);
+    _led->SetDimmingLevel(0x0777); // Mid Brightness
 }
 
 void CONTROLLER::powerOff() {
@@ -117,11 +127,29 @@ void CONTROLLER::moveServo() {
 }
 
 void CONTROLLER::setLED() {
-  // Change Light to correct colour
+     if (nettemp <= 0)                  { _led->SetColor(White);  }
+     if (nettemp > 0  && nettemp <= 5)  { _led->SetColor(Purple); }
+     if (nettemp > 5  && nettemp <= 10) { _led->SetColor(Blue);   }
+     if (nettemp > 10 && nettemp <= 15) { _led->SetColor(Green);  }
+     if (nettemp > 15 && nettemp <= 25) { _led->SetColor(Yellow); }
+     if (nettemp > 25 && nettemp <= 30) { _led->SetColor(Orange); }
+     if (nettemp > 30 )                 { _led->SetColor(Red);    }
+
+      /* Todo:
+    Off            Off / Sleeping
+    Slow Flash	   Booting / Getting data
+    Quick Flash    Error (Using Historic or Local Data)
+    Colour cycle   Needs configuring
+     */
 }
 
 void CONTROLLER::sleep() {
   // Sleep the ATMega
   // Need to check servo has finished moving before sleeping, perhaps put that into the run method rather than the sleep call
   
+     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+}
+
+void CONTROLLER::wake() {
+  // Todo: Set a flag to indicate that we want to go get the weather
 }

@@ -76,7 +76,7 @@
 #define STARTWALK                  0x50030018U
 
 typedef enum{
-	White, Silver, Gray, Black, Red, Maroon, Yellow, Olive, Lime, Green, Aqua, Teal, Blue, Navy, Fuchsia, Purple
+	White, Silver, Gray, Black, Red, Orange, Maroon, Yellow, Olive, Lime, Green, Aqua, Teal, Blue, Navy, Fuchsia, Purple
 	}Colours;
 class InfineonRGB{
 	public:
