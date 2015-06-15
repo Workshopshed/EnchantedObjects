@@ -1,6 +1,7 @@
 #include "Controller.h"
 //Todo: Drop process, use serial
 #include <Process.h>
+#include <avr/power.h>
 
 CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led){
   _dht = dht;
@@ -10,6 +11,7 @@ CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led){
 }
 
 void CONTROLLER::begin() {
+    power_adc_disable();          //Not using any analogue functionality so can turn it off
     pinMode(LininoPin, OUTPUT);
     pinMode(powerpin, OUTPUT);
     //Todo: Add in the handshake pin    
