@@ -2,9 +2,12 @@
 from StringIO import StringIO
 import pycurl
 import json, sys, urllib, urlparse
+import subprocess
+from parse import *
 
 def get_location():
     with open('/etc/WeatherAPI.conf', 'r') as f:
+    #with open('WeatherAPI.conf', 'r') as f:
         location_name = f.readline()
     f.close()
     return location_name
@@ -99,21 +102,63 @@ def parse_weather(json):
     temp = json['query']['results']['channel']['item']['condition']['temp']
     return {'text': text, 'code': code, 'temp': float(temp)}
 
+def guess_weather(rel_humidity, temp):
+    # Temperature in Degrees C and Relative Humidity as a percentage
+    # Based on an approximation of these graphs
+    # ftp://www.star.nesdis.noaa.gov/pub/smcd/spb/lzhou/AMS86/PREPRINTS/PDFS/97921.pdf
+    if rel_humidity < 0.66 * temp + 53:
+        weather = 1  # Very likely dry
+    elif rel_humidity < 0.66 * temp + 63:
+        weather = 2
+    elif rel_humidity < 0.66 * temp + 73:
+        weather = 3  # Changeable
+    elif rel_humidity < 0.66 * temp + 83:
+        weather = 4
+    elif rel_humidity >= 0.66 * temp + 83:
+        weather = 5  # Probably rainy
+    return {'text': "Local Estimate", 'code': weather, 'temp': float(temp)}
+
+def parselines(s):
+    lines = s.splitlines()
+    d = {}
+    for line in lines:
+        p = parse("{}: {}",line)
+        if p:
+            d[p[0]] = p[1]
+    return d
+
+def getWifiStatus():
+    #w = subprocess.check_output(["type", "WifiExample.txt"], shell=True)  # Shell needed for type command, should not be needed for running Prettyprint
+    w = subprocess.check_output("/usr/bin/pretty-wifi-info.lua")
+    p = parselines(w)
+
+    for key in ('Mode','Interface name','SSID','Signal','Encryption method','Active for','IP address','MAC address','RX/TX'):
+        p.setdefault(key,'Unknown')
+
+    return p
 
 def main():
+    # Todo: Get these from serial port
+    temp = 10
+    humid = 70
     try:
-        loc = get_location()
-        weather_url = build_url(loc)
-        r = call_api(weather_url)
-        j = json.loads(r)
-        weather = parse_weather(j)
+        w = getWifiStatus()
+        if w['Mode'] == "Client" :
+            loc = get_location()
+            weather_url = build_url(loc)
+            r = call_api(weather_url)
+            j = json.loads(r)
+            weather = parse_weather(j)
+        else:
+            weather = guess_weather(humid,temp)
 
         print 'OK!,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
 
         return 0
 
     except Exception, err:
-        print 'Err,%s,0,0.0' % str(err).replace(",", " ")
+        weather = guess_weather(humid,temp)
+        print 'Err,%s,%s,%4.2f' % (str(err).replace(",", " "),weather['code'], weather['temp'])
         return 1
 
 
