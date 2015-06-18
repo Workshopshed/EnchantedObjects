@@ -14,14 +14,13 @@ unsigned long Blinker::Level(void)
     if (_state == 0) {
      iTimeout = millis() + _onDuration;
     }
-    else
-    {
+    else {
      iTimeout = millis() + _offDuration;
     }
     _state = !_state; 
   }
   
-  if (_state = 0) { return _offLevel; }
+  if (_state == 0) { return _offLevel; }
   return _onLevel;
    
 }
