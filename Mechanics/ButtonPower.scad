@@ -3,13 +3,13 @@ module logo(radius,height) {
 		del = 1;
 		scale = (radius/5);
 		band = scale / 2.5;
-		angle = 27;
+		angle = 32;
 		//Arc
 		difference() {
 				cylinder(h=height,r=3*scale,center=true,$fn=50);
 				cylinder(h=height+del,r=(3*scale)-2*band,center=true,$fn=50);
 				translate([0,2.2*scale,0])
-					cube(size = [2*scale,2*scale,height+del], center = true);
+					cube(size = [2.7*scale,2.5*scale,height+del], center = true);
 			}
 		//Bar 
 		translate([0,scale,-height/2])
