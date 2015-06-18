@@ -25,13 +25,13 @@ module button_wifi() {
 		//Cap
 		difference () {
 			cylinder(h=3,r1=5.2,r2=5,center=true,$fn=50);
-			translate([1.8,2.3,1.5])
-				wifi(6,1);
+			translate([1.8,2.6,1.5])
+				wifi(6.5,1);
 		}
 		//Shank
 		translate([0,0,-3])
-			cylinder(h=6,r=3,center=true,$fn=50);
-		translate([1,2.7,-5.5])
+			cylinder(h=6,r=3.4,center=true,$fn=50);
+		translate([1,3,-5.5])
 			sphere(0.5,$fn=50);
 	}
 }
