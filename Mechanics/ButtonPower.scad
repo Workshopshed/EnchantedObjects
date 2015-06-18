@@ -29,14 +29,14 @@ module button_power() {
 	union() {
 		//Cap
 		difference () {
-			cylinder(h=5,r1=5.2,r2=5,center=true,$fn=50);
-			translate([0,0,2.5])
+			cylinder(h=3,r1=5.2,r2=5,center=true,$fn=50);
+			translate([0,0,1.5])
 				logo(6,1);
 		}
 		//Shank
-		translate([0,0,-5])
+		translate([0,0,-3])
 			cylinder(h=6,r=3,center=true,$fn=50);
-		translate([1,2.7,-7.5])
+		translate([1,2.7,-5.5])
 			sphere(0.5,$fn=50);
 	}
 }
