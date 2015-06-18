@@ -36,7 +36,7 @@ module button_power() {
 		}
 		//Shank
 		translate([0,0,-3])
-			cylinder(h=5.5,r=3.3,center=true,$fn=50);
+			cylinder(h=5.5,r=3.2,center=true,$fn=50);
 		translate([1,3,-5.0])
 			sphere(0.5,$fn=50);
 	}
