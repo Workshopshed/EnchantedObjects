@@ -26,7 +26,7 @@ module button_wifi() {
 		difference () {
 			cylinder(h=2.5,r1=5.2,r2=5,center=true,$fn=50);
 			translate([1.8,2.6,1.5])
-				wifi(6.5,1);
+				wifi(6.2,1);
 		}
 		//Shank
 		translate([0,0,-3])
