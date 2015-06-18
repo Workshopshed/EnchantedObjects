@@ -1,7 +1,7 @@
 module wifi(radius,height) {
 	union() {
 		del = 1;
-		band = 0.6;
+		band = 0.45;
 		scale = (radius/4);
 		difference () {
 			for ( i = [2 : 4] ) {
@@ -24,14 +24,14 @@ module button_wifi() {
 	union() {
 		//Cap
 		difference () {
-			cylinder(h=5,r1=5.2,r2=5,center=true,$fn=50);
-			translate([1.8,2.3,2.5])
+			cylinder(h=3,r1=5.2,r2=5,center=true,$fn=50);
+			translate([1.8,2.3,1.5])
 				wifi(6,1);
 		}
 		//Shank
-		translate([0,0,-5])
+		translate([0,0,-3])
 			cylinder(h=6,r=3,center=true,$fn=50);
-		translate([1,2.7,-7.5])
+		translate([1,2.7,-5.5])
 			sphere(0.5,$fn=50);
 	}
 }
