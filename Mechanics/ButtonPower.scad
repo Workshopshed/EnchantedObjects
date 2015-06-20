@@ -32,7 +32,7 @@ module button_power() {
 		difference () {
 			cylinder(h=2.5,r1=5.2,r2=5,center=true,$fn=50);
 			translate([0,0,1.5])
-				logo(6.1,1);
+				logo(6.1,2);
 		}
 		//Shank
 		translate([0,0,-3])
