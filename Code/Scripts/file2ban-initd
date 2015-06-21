@@ -1,0 +1,68 @@
+#!/bin/sh /etc/rc.common
+# This file is part of Fail2Ban.
+#
+# Fail2Ban is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# Fail2Ban is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Fail2Ban; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# Author: Sireyessire, Cyril Jaquier
+#
+
+extra_started_commands="reload showlog"
+
+FAIL2BAN="/usr/bin/fail2ban-client ${FAIL2BAN_OPTIONS}"
+prog=fail2ban-server
+lockfile=${LOCKFILE-/var/lock/fail2ban}
+socket=${SOCKET-/var/run/fail2ban/fail2ban.sock}
+pidfile=${PIDFILE-/var/run/fail2ban/fail2ban.pid}
+
+start() {
+    echo -n $"Starting fail2ban: "
+    ${FAIL2BAN} -x start > /dev/null
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        touch ${lockfile}
+        echo -n "Success"
+    else
+        echo -n "Failed"
+    fi
+    echo
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping fail2ban: "
+    ${FAIL2BAN} stop > /dev/null
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        rm -f ${lockfile} ${pidfile}
+        echo -n "Success"
+    else
+        echo -n "Failed"
+    fi
+    echo
+    return $RETVAL
+}
+
+reload() {
+    echo "Reloading fail2ban: "
+    ${FAIL2BAN} reload
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+showlog(){
+	less /var/log/fail2ban.log
+}
+
