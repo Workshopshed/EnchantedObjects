@@ -1,6 +1,6 @@
 clearance=0.6;
 
-module beam(length,width,height,hole) {
+module mainbeam(length,width,height,hole) {
 	difference() {
 		//Body
 		hull(){
@@ -48,7 +48,7 @@ module pin(length,diameter,hole) {
 		}
 }
 
-module beam2(length,width,height,hole) {
+module linkbeam(length,width,height,hole) {
 		//Body
 		difference() {
 		union() {
@@ -67,7 +67,7 @@ module beam2(length,width,height,hole) {
 		}
 }
 
-module beam3(length,width,height,hole,screw) {
+module magnetcarrier(length,width,height,hole,screw) {
 		//Magnet carrier
 		magpos = length/2+7;
 		//Body
@@ -129,15 +129,15 @@ module washer(diameter,height,hole)
 }
 
 module main() {
-	beam(50,10,2.5,4);
+	mainbeam(50,10,2.5,4);
 	translate([0,20,0])
-			beam2(25,8,2,4);
+			linkbeam(25,8,2,4);
 	translate([0,40,0])
-			beam2(25,8,2,4);
+			linkbeam(25,8,2,4);
 	translate([0,60,0])
-			beam3(30,8,2,4,2);
+			magnetcarrier(30,8,2,4,2);
 	translate([0,80,0])
-			beam3(30,8,2,4,2);
+			magnetcarrier(30,8,2,4,2);
 	for (i=[1:2]){
 	translate([0,85+(i*15),0.5])
 			plate(25,8,2.5,2,10,4,2);
