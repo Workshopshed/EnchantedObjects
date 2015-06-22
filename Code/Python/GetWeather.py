@@ -3,11 +3,13 @@ from StringIO import StringIO
 import pycurl
 import json, sys, urllib, urlparse
 import subprocess
+import serial
 from parse import *
+
 
 def get_location():
     with open('/etc/WeatherAPI.conf', 'r') as f:
-    #with open('WeatherAPI.conf', 'r') as f:
+        # with open('WeatherAPI.conf', 'r') as f:
         location_name = f.readline()
     f.close()
     return location_name
@@ -27,6 +29,7 @@ def build_url(location):
 
     return urlparse.urlunparse(url_parts)
 
+
 def call_api(url):
     r = StringIO()
     c = pycurl.Curl()
@@ -37,6 +40,7 @@ def call_api(url):
     c.perform()
     c.close()
     return r.getvalue()
+
 
 def map_code(code):
     # Map condition codes to expected precipitation
@@ -102,6 +106,7 @@ def parse_weather(json):
     temp = json['query']['results']['channel']['item']['condition']['temp']
     return {'text': text, 'code': code, 'temp': float(temp)}
 
+
 def guess_weather(rel_humidity, temp):
     # Temperature in Degrees C and Relative Humidity as a percentage
     # Based on an approximation of these graphs
@@ -118,51 +123,86 @@ def guess_weather(rel_humidity, temp):
         weather = 5  # Probably rainy
     return {'text': "Local Estimate", 'code': weather, 'temp': float(temp)}
 
+
 def parselines(s):
     lines = s.splitlines()
     d = {}
     for line in lines:
-        p = parse("{}: {}",line)
+        p = parse("{}: {}", line)
         if p:
             d[p[0]] = p[1]
     return d
 
+
 def getWifiStatus():
-    #w = subprocess.check_output(["type", "WifiExample.txt"], shell=True)  # Shell needed for type command, should not be needed for running Prettyprint
+    # w = subprocess.check_output(["type", "WifiExample.txt"], shell=True)  # Shell needed for type command, should not be needed for running Prettyprint
     w = subprocess.check_output("/usr/bin/pretty-wifi-info.lua")
     p = parselines(w)
 
-    for key in ('Mode','Interface name','SSID','Signal','Encryption method','Active for','IP address','MAC address','RX/TX'):
-        p.setdefault(key,'Unknown')
+    for key in (
+    'Mode', 'Interface name', 'SSID', 'Signal', 'Encryption method', 'Active for', 'IP address', 'MAC address',
+    'RX/TX'):
+        p.setdefault(key, 'Unknown')
 
     return p
 
-def main():
-    # Todo: Get these from serial port
-    temp = 10
-    humid = 70
+
+def getWeather(humid, temp):
     try:
         w = getWifiStatus()
-        if w['Mode'] == "Client" :
+        if w['Mode'] == "Client":
             loc = get_location()
             weather_url = build_url(loc)
             r = call_api(weather_url)
             j = json.loads(r)
             weather = parse_weather(j)
         else:
-            weather = guess_weather(humid,temp)
+            weather = guess_weather(humid, temp)
 
-        print 'OK!,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
-
-        return 0
+        return 'OK!,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
 
     except Exception, err:
-        weather = guess_weather(humid,temp)
-        print 'Err,%s,%s,%4.2f' % (str(err).replace(",", " "),weather['code'], weather['temp'])
-        return 1
+        weather = guess_weather(humid, temp)
+        return 'Err,%s,%s,%4.2f' % (str(err).replace(",", " "), weather['code'], weather['temp'])
 
 
+def processSerial(line):
+    # Expect lines in similar format as outbound 'OK!,temp,humidity'
+    default_temp = 10
+    default_humid = 70
+
+    if line[0:2] != "OK!":
+        return {'temp': default_temp, 'humid': default_humid}
+    s = line.split(',')
+    if len(s) < 3:
+        return {'temp': default_temp, 'humid': default_humid}
+
+    temp = s[1]
+    humid = s[2]
+
+    return {'temp': temp, 'humid': humid}
+
+
+def main():
+    try:
+        # We expect the Arduino to shut down the Linino side long before these timeouts are reached
+        # Baudrate needs to be mirrored on ATMega side
+        ser = serial.Serial('/dev/ttyATH0', 115200, timeout=60*60,writeTimeout=60*60)
+    except:
+        exit(1)  # quit as we can't start the serial port
+
+    line = ser.readline()  # read a '\n' terminated line
+
+    while line != "":
+        l = processSerial(line)
+        w = getWeather(l['humid'], l['temp'])
+        print (w)              # Write to Console, for testing
+        ser.write(w)
+        line = ser.readline()  # read next line
+
+    print("timeout")
+    ser.close()
+
+# Run program
 if __name__ == '__main__':
     sys.exit(main())
-
-
