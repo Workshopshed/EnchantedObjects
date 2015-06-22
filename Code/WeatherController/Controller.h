@@ -7,15 +7,16 @@ class CONTROLLER {
  private:
   float localtemp;
   float nettemp;
-  int localhumidity;
-  int sleeps;
+  uint8_t localhumidity;
+  uint8_t sleeps;
   DHT *_dht;
   VarSpeedServo *_servo;
   InfineonRGB *_led;
-  const int powerpin = 11;
-  const int servoPin = 9;
-  const int LininoPin = A5;
-  byte position;
+  const uint8_t powerpin = 11;
+  const uint8_t servoPin = 9;
+  const uint8_t LininoPin = A5;
+  const uint8_t HandshakePin = 7;
+  uint8_t position;
   void powerOn();
   void powerOff();
   void lininoOn();

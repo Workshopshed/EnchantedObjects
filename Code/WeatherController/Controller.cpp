@@ -1,6 +1,6 @@
 #include "Controller.h"
 //Todo: Drop process, use serial
-#include <Process.h>
+//#include <Process.h>
 #include <avr/power.h>
 
 CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led){
@@ -14,7 +14,7 @@ void CONTROLLER::begin() {
     power_adc_disable();          //Not using any analogue functionality so can turn it off
     pinMode(LininoPin, OUTPUT);
     pinMode(powerpin, OUTPUT);
-    //Todo: Add in the handshake pin    
+    pinMode(HandshakePin, INPUT);
 
     //Todo: Setup serial port
     
@@ -41,6 +41,7 @@ void CONTROLLER::readLocalWeather() {
 
 void CONTROLLER::readNetWeather() {
   // Todo: Swap this technique to use serial rather than process
+  /*
   Process p;        
   p.begin("python");  
   p.addParameter("/mnt/sda1/Python/GetWeather.py"); 
@@ -48,10 +49,10 @@ void CONTROLLER::readNetWeather() {
   p.addParameter("-t " + String(localtemp));
   p.run();      // Run the process and wait for its termination
   String weather = p.readStringUntil('\n');
-
+  */
   // Read weather over /dev/ttyATH0<->Serial1
   
-  //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
+  String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
   if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values
   if (!parseWeather(weather)) { return; } // No change in weather
 
@@ -62,14 +63,14 @@ bool CONTROLLER::parseWeather(String weather) {
   bool changed = false;
   
   const char separator = ',';
-  int c1 = weather.indexOf(separator);
-  int c2 = weather.indexOf(separator, c1+1);
-  int c3 = weather.indexOf(separator, c2+1);
+  unsigned int c1 = weather.indexOf(separator);
+  unsigned int c2 = weather.indexOf(separator, c1+1);
+  unsigned int c3 = weather.indexOf(separator, c2+1);
   // Check if we have 4 values separated with commas
   if (c1 == -1 || c2 == -1 || c3 == -1) { return changed; }
 
   String sPos = weather.substring(c2+1,c3);
-  int tempPos = sPos.toInt();
+  uint8_t tempPos = sPos.toInt();
   if (tempPos != 0) {
     if (tempPos != position) {
       changed = true;
@@ -88,7 +89,6 @@ bool CONTROLLER::parseWeather(String weather) {
   
   return changed;
 }
-
 
 void CONTROLLER::powerOn() {
     digitalWrite(powerpin, HIGH);    // sets the MOSFET on
@@ -121,10 +121,10 @@ bool CONTROLLER::lininoRunning() {
 }
 
 void CONTROLLER::moveServo() {
-    int p = position;
+    uint8_t p = position;
     if (p == 0) { p = 3; }           // Default to middle position
     p = constrain(position, 1, 5);   // Ensure position valid
-    int degrees = map(p,1,5,50,100); // Move servo to correct position 50 to 100 degrees
+    unsigned int degrees = map(p,1,5,50,100); // Move servo to correct position 50 to 100 degrees
     _servo->write(degrees,10,false); // Slow move, don't wait
 }
 
