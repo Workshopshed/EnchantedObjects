@@ -1,35 +1,44 @@
 #include "Controller.h"
-//Todo: Drop process, use serial
-//#include <Process.h>
-#include <avr/power.h>
 
-CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *serial){
+CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *serial,Blinker *blinker){
   _dht = dht;
   _servo = servo;
   _led = led;
   _serial = serial;
+  _blinker = blinker;
   position = 3; // Middle position
 }
 
 void CONTROLLER::begin() {
-    power_adc_disable();          //Not using any analogue functionality so can turn it off
     pinMode(LininoPin, OUTPUT);
     pinMode(powerpin, OUTPUT);
     pinMode(HandshakePin, INPUT);
-    //Todo: Setup serial port
-    
+    pinMode(ButtonPowerPin, INPUT_PULLUP);
+    pinMode(ButtonWifiPin, INPUT_PULLUP);
 }
 
 void CONTROLLER::run(void) {
-    //Todo: Determine if we want to sleep or stay awake
-    lininoOn();
-    powerOn();
-    readLocalWeather();
-    readNetWeather();
-    moveServo();
-    setLED();
-    
-    //Todo: Timeout and go to sleep
+    if (sleeps <= 0 || knock)
+    {
+        //Todo: Implement asynchronous request / read etc, perhaps a statemodel
+          lininoOn();
+          powerOn();
+          readLocalWeather();
+          requestNetWeather();
+          readNetWeather();
+          moveServo();
+          setLED();
+          //Todo: Timeout and go to sleep
+          //      sleeps = 900; // (60/4)*60 = 60 minutes of sleep
+    }
+    else
+    {
+          //Don't sleep if the user is pressing the power pin
+          if (!digitalRead(ButtonPowerPin)) {
+            sleeps--;
+            sleep();
+          }
+    }
 }
 
 void CONTROLLER::readLocalWeather() {
@@ -39,23 +48,24 @@ void CONTROLLER::readLocalWeather() {
     localtemp = _dht->readTemperature();
 };
 
-void CONTROLLER::readNetWeather() {
+void CONTROLLER::requestNetWeather() {
   //Request new forcast
-  //Todo: Split into separare function to "RequestWeather"
   _serial->print("OK!,");
   _serial->print(localtemp);
   _serial->print(",");
   _serial->print(localhumidity);
   _serial->print("\n");
+}
+
+void CONTROLLER::readNetWeather() {
+  // Todo: this is a blocking read, we have to wait for the weather, need to break out
   
   // Read weather over /dev/ttyATH0<->Serial1
-  // Todo: this is a blocking read, we have to wait for the weather, beed to break out
   String weather = _serial->readStringUntil('\n');
   
   //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
-  if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values
+  if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values, Todo: Handle case where the Wifi is in the other mode
   if (!parseWeather(weather)) { return; } // No change in weather
-
 }
 
 bool CONTROLLER::parseWeather(String weather) {
@@ -96,7 +106,7 @@ void CONTROLLER::powerOn() {
     _led->begin();
     _led->SetCurrentRGB(1,1,1);
     _led->SetOffTimesRGB(0x50, 0x52,0x50);
-    _led->SetDimmingLevel(0x0777); // Mid Brightness
+    _led->SetDimmingLevel(0);       // Off
 }
 
 void CONTROLLER::powerOff() {
@@ -114,9 +124,8 @@ void CONTROLLER::lininoOff() {
 }
 
 bool CONTROLLER::lininoRunning() {
-  // Todo: Is Linino running yet?
   // See https://gist.github.com/wayoda/db3c023417757f726088
-  
+    return digitalRead(HandshakePin);
 }
 
 void CONTROLLER::moveServo() {
@@ -128,6 +137,8 @@ void CONTROLLER::moveServo() {
 }
 
 void CONTROLLER::setLED() {
+     //Todo: If colour cycle then get colour from the blinker else get colour from temp
+  
      if (nettemp <= 0)                  { _led->SetColor(White);  }
      if (nettemp > 0  && nettemp <= 5)  { _led->SetColor(Purple); }
      if (nettemp > 5  && nettemp <= 10) { _led->SetColor(Blue);   }
@@ -136,7 +147,9 @@ void CONTROLLER::setLED() {
      if (nettemp > 25 && nettemp <= 30) { _led->SetColor(Orange); }
      if (nettemp > 30 )                 { _led->SetColor(Red);    }
 
-      /* Todo:
+     _led->SetDimmingLevel(_blinker->Level());
+     
+      /* Todo: (should be handled by blinker)
     Off            Off / Sleeping
     Slow Flash	   Booting / Getting data
     Quick Flash    Error (Using Historic or Local Data)
@@ -147,10 +160,9 @@ void CONTROLLER::setLED() {
 void CONTROLLER::sleep() {
   // Sleep the ATMega
   // Need to check servo has finished moving before sleeping, perhaps put that into the run method rather than the sleep call
-  
      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
 }
 
 void CONTROLLER::wake() {
-  // Todo: Set a flag to indicate that we want to go get the weather
+    knock = true;
 }

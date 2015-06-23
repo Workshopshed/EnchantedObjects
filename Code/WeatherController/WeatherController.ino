@@ -1,5 +1,6 @@
 #include <Process.h>
 #include <Wire.h>
+#include <avr/power.h>
 #include "EnableInterrupt.h"
 #include "LowPower.h"
 #include "Controller.h"
@@ -14,12 +15,14 @@ const int knockPin = 12;
 DHT dht(DHTPIN, DHTTYPE);
 VarSpeedServo servo;
 InfineonRGB led;
+Blinker blinker(0x0777,0);
 
-CONTROLLER Controller(&dht,&servo,&led,&Serial1);
+CONTROLLER Controller(&dht,&servo,&led,&Serial1,&blinker);
 
 void setup() {
+  power_adc_disable();          //Not using any analogue functionality so can turn it off
   Serial.begin(9600); 
-  Serial.println("System test!");
+  Serial.println("Weather System Booting");
   Serial1.begin(115200);
   Controller.begin();
   enableInterrupt(knockPin, knock, CHANGE);
@@ -27,7 +30,6 @@ void setup() {
 
 void loop() {
   Controller.run();
-  delay(1000);
 }
 
 void knock() {
