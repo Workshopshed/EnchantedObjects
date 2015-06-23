@@ -158,8 +158,6 @@ void CONTROLLER::setLED() {
 }
 
 void CONTROLLER::sleep() {
-  // Sleep the ATMega
-  // Need to check servo has finished moving before sleeping, perhaps put that into the run method rather than the sleep call
      LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
 }
 
