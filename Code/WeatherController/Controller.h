@@ -16,7 +16,7 @@ class CONTROLLER {
   VarSpeedServo *_servo;
   InfineonRGB *_led;
   Blinker *_blinker;
-  const uint8_t powerpin = 11;
+  const uint8_t powerpin = 12;
   const uint8_t servoPin = 9;
   const uint8_t LininoPin = A5;
   const uint8_t HandshakePin = 7;

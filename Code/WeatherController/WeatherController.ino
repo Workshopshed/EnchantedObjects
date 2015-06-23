@@ -8,7 +8,7 @@
 #include "VarSpeedServo.h"
 
 const int DHTPIN = 4;
-const int knockPin = 12;
+const int knockPin = 11;
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 
 DHT dht(DHTPIN, DHTTYPE);
