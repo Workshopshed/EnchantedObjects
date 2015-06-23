@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+# (C) 2008 openwrt.org
+
+START=99
+STOP=01
+
+start() {
+    [ -e /sys/class/gpio/ ] && {
+        echo "Arduino Handshake On"
+
+        echo "19" > /sys/class/gpio/export
+        echo "high" > /sys/class/gpio/gpio19/direction
+        echo "1" > /sys/class/gpio/gpio22/value
+        echo "1" > /sys/class/gpio/gpio19/value
+    }
+}
+
+stop() {
+    [ -e /sys/class/gpio/ ] && {
+        echo "Arduino Handshake Off"
+        echo "0" > /sys/class/gpio/gpio19/value
+        echo "19" > /sys/class/gpio/unexport
+        echo "0" > /sys/class/gpio/gpio22/value
+    }
+}
+
+
+
+
