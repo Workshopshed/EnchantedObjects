@@ -28,7 +28,13 @@ DHT dht(DHTPIN, DHTTYPE);
 void setup() {
   Serial.begin(9600); 
   Serial.println("DHTxx test!");
- 
+  
+  //Need to turn on our power system
+  const uint8_t powerpin = 12;
+  pinMode(powerpin, OUTPUT);  
+  digitalWrite(powerpin, HIGH);
+  
+  delay(2000);
   dht.begin();
 }
 
