@@ -40,22 +40,21 @@ void CONTROLLER::readLocalWeather() {
 };
 
 void CONTROLLER::readNetWeather() {
-  // Todo: Swap this technique to use serial rather than process
-  /*
-  Process p;        
-  p.begin("python");  
-  p.addParameter("/mnt/sda1/Python/GetWeather.py"); 
-  p.addParameter("-r " + String(localhumidity));
-  p.addParameter("-t " + String(localtemp));
-  p.run();      // Run the process and wait for its termination
-  String weather = p.readStringUntil('\n');
-  */
-  // Read weather over /dev/ttyATH0<->Serial1
+  //Request new forcast
+  Serial1.print("OK!,");
+  Serial1.print(localtemp);
+  Serial1.print(",");
+  Serial1.print(localhumidity);
+  Serial1.print("\n");
   
-  String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
+  // Read weather over /dev/ttyATH0<->Serial1
+  // Todo: Need a readline function...
+  
+  String weather = Serial1.readline();
+  
+  //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
   if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values
   if (!parseWeather(weather)) { return; } // No change in weather
-
 
 }
 
