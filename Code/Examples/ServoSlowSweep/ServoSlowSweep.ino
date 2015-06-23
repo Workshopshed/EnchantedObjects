@@ -13,6 +13,11 @@ VarSpeedServo myservo; // create servo object to control a servo
 // a maximum of eight servo objects can be created
 const int servoPin = 9; // the digital pin used for the servo
 void setup() {
+  //Need to turn on our power system
+  const uint8_t powerpin = 12;
+  pinMode(powerpin, OUTPUT);  
+  digitalWrite(powerpin, HIGH);
+  
   myservo.attach(servoPin); // attaches the servo on pin 9 to the servo object
   myservo.write(75,10,true); // set the intial position of the servo, slow, wait until done.
 }
