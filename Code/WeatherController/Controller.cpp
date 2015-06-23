@@ -102,6 +102,7 @@ bool CONTROLLER::parseWeather(String weather) {
 void CONTROLLER::powerOn() {
     digitalWrite(powerpin, HIGH);    // sets the MOSFET on
     _servo->attach(servoPin);
+    if (_servo->read() == 0) { _servo->write(ServoMid,10,false); };
     _dht->begin();                  //Todo: Check we can run these more than once
     _led->begin();
     _led->SetCurrentRGB(1,1,1);
@@ -132,7 +133,7 @@ void CONTROLLER::moveServo() {
     uint8_t p = position;
     if (p == 0) { p = 3; }           // Default to middle position
     p = constrain(position, 1, 5);   // Ensure position valid
-    unsigned int degrees = map(p,1,5,50,100); // Move servo to correct position 50 to 100 degrees
+    unsigned int degrees = map(p,1,5,ServoMin,ServoMax); // Move servo to correct position 50 to 100 degrees
     _servo->write(degrees,10,false); // Slow move, don't wait
 }
 

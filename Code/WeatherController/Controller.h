@@ -22,6 +22,9 @@ class CONTROLLER {
   const uint8_t HandshakePin = 7;
   const uint8_t ButtonWifiPin = A0;
   const uint8_t ButtonPowerPin = A1;
+  const uint8_t ServoMin = 58;
+  const uint8_t ServoMax = 95;
+  const uint8_t ServoMid = ServoMin + ((ServoMax-ServoMin)/2);
   uint8_t position;
   void powerOn();
   void powerOff();
