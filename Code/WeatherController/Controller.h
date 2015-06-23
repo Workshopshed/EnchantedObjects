@@ -10,6 +10,7 @@ class CONTROLLER {
   uint8_t localhumidity;
   uint8_t sleeps;
   DHT *_dht;
+  Stream *_serial;
   VarSpeedServo *_servo;
   InfineonRGB *_led;
   const uint8_t powerpin = 11;
@@ -30,7 +31,7 @@ class CONTROLLER {
   void sleep();
 
  public:
-  CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led);
+  CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *serial);
   void begin();
   void run(void);
   void wake();

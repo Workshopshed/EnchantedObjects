@@ -3,10 +3,11 @@
 //#include <Process.h>
 #include <avr/power.h>
 
-CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led){
+CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *serial){
   _dht = dht;
   _servo = servo;
   _led = led;
+  _serial = serial;
   position = 3; // Middle position
 }
 
@@ -15,7 +16,6 @@ void CONTROLLER::begin() {
     pinMode(LininoPin, OUTPUT);
     pinMode(powerpin, OUTPUT);
     pinMode(HandshakePin, INPUT);
-
     //Todo: Setup serial port
     
 }
@@ -41,16 +41,16 @@ void CONTROLLER::readLocalWeather() {
 
 void CONTROLLER::readNetWeather() {
   //Request new forcast
-  Serial1.print("OK!,");
-  Serial1.print(localtemp);
-  Serial1.print(",");
-  Serial1.print(localhumidity);
-  Serial1.print("\n");
+  //Todo: Split into separare function to "RequestWeather"
+  _serial->print("OK!,");
+  _serial->print(localtemp);
+  _serial->print(",");
+  _serial->print(localhumidity);
+  _serial->print("\n");
   
   // Read weather over /dev/ttyATH0<->Serial1
-  // Todo: Need a readline function...
-  
-  String weather = Serial1.readline();
+  // Todo: this is a blocking read, we have to wait for the weather, beed to break out
+  String weather = _serial->readStringUntil('\n');
   
   //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
   if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values

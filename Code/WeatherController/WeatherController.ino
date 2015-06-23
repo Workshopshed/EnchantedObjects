@@ -14,11 +14,13 @@ const int knockPin = 12;
 DHT dht(DHTPIN, DHTTYPE);
 VarSpeedServo servo;
 InfineonRGB led;
-CONTROLLER Controller(&dht,&servo,&led);
+
+CONTROLLER Controller(&dht,&servo,&led,&Serial1);
 
 void setup() {
   Serial.begin(9600); 
   Serial.println("System test!");
+  Serial1.begin(115200);
   Controller.begin();
   enableInterrupt(knockPin, knock, CHANGE);
 }
