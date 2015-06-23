@@ -24,7 +24,8 @@ void setup() {
 void loop() {
   myservo.write(50,10,true); // move the servo to 180, max speed, wait until done
   // write(degrees 0-180, speed 1-255, wait to complete true-false)
+  delay(500);
   myservo.write(100,10,true); // move the servo to 180, slow speed, wait until done
-  delay(200);
+  delay(500);
 }
 
