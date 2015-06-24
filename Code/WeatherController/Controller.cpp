@@ -11,53 +11,70 @@ CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *se
 }
 
 void CONTROLLER::begin() {
+    pinMode(LEDPin, OUTPUT);
     pinMode(LininoPin, OUTPUT);
-    pinMode(Powerpin, OUTPUT);
+    pinMode(PowerPin, OUTPUT);
     pinMode(HandshakePin, INPUT);
     pinMode(ButtonPowerPin, INPUT_PULLUP);
     pinMode(ButtonWifiPin, INPUT_PULLUP);
-    //Servo pin is handled by 
+    
+    
+    //Servo pin is handled by servo attach
 }
 
 void CONTROLLER::run(void) {
-  /*
-  todo: Add a state model to make this coding easier
-  
-  When the board wakes up it checks to see if the sleep counter has reached zero or if knock has been detected and if so It starts up.
-  Otherwise it goes back to sleep for another 4 seconds.
-  In start up it firstly powers on the peripherals and WiFi module. It then sets the LED colour to be that of the last known temperature.
-  Following this it sets the LED to fast flash to indicate it's going to get the weather. It then gets the local temperature and humidity.
-  Once the WiFi module has booted it will request the weather.
-  On the Linino side the system sends a handshake signal to indicate that it is ready and starts up the Python script to listen to the serial port.
-  The Python script makes an API call to the Yahoo weather service, if that errors or times out it will make a "guess" at the weather based on the local conditions provided by the sensor.
-  The data is parsed and send back to the ATmega as a simple string.
-  Once the weather has been received the system shuts down the WiFi module. It can then update the position and new LED colour which is then solid and starts a timer for 1 minute.
-  sleeps = 900; // (60/4)*60 = 60 minutes of sleep
-  Once that timer has expired it will shut down the peripherals and go back to sleep.
-  */
-  
-  
-    if (sleeps <= 0 || knock)
-    {
-        knock = false;
-        //Todo: Implement asynchronous request / read etc, perhaps a statemodel
-          lininoOn();
-          powerOn();
-          readLocalWeather();
-          requestNetWeather();
-          readNetWeather();
-          moveServo();
-          setLED();
-    
-    }
-    else
-    {
-          //Don't sleep if the user is pressing the power pin
-          if (!digitalRead(ButtonPowerPin)) {
-            sleeps--;
-            sleep();
-          }
-    }
+          switch (state) {
+          case C_Sleeping:
+              if (sleeps <= 0 || knock) {
+                  state = C_WakeUp;
+              } else {
+                //Don't sleep if the user is pressing the power pin
+                if (!digitalRead(ButtonPowerPin)) {
+                  sleeps--;
+                  sleep();
+                }
+              }
+              break;
+          case C_WakeUp:
+              Serial.println("Waking up");
+              acknowledge();
+              _blinker->Blink(Blink_Long);
+              lininoOn();
+              powerOn();
+              moveServo(); // Show previous values
+              readLocalWeather();
+              state = C_Booting;
+              break;
+          case C_Booting:
+              if (isLininoRunning()) {
+                Serial.println("Getting Weather");
+                requestNetWeather();
+                state = C_GettingWeather;
+              }
+              break;
+          case C_GettingWeather:
+              if (isReadyNetWeather()) {
+                Serial.println("Parsing Weather");
+                readNetWeather();
+                lininoOff();
+                moveServo();
+                state = C_Display;
+                _DisplayTimeout = millis() + 60000; // Display for 1 minute
+              }
+              break;
+           case C_Display:
+             if (_DisplayTimeout < millis()) {
+               Serial.println("Back to sleep");
+               _blinker->Blink(Blink_Off);
+               powerOff();
+               sleeps = 15; //1 min
+               //sleeps = 900; // (60/4)*60 = 60 minutes of sleep
+               knock = false;               
+               state = C_Sleeping;
+             }
+             break;
+        }
+        setLED(); 
 }
 
 void CONTROLLER::readLocalWeather() {
@@ -78,7 +95,7 @@ void CONTROLLER::requestNetWeather() {
 
 
 bool CONTROLLER::isReadyNetWeather() {
-   return (_serial->available() > 6); 
+   return (_serial->available() > 0); 
 }
 
 void CONTROLLER::readNetWeather() {
@@ -87,8 +104,15 @@ void CONTROLLER::readNetWeather() {
   String weather = _serial->readStringUntil('\n');
   
   //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
-  if (!weather.startsWith("OK!")) { return; }  //Todo: Handle case where using local values, Todo: Handle case where the Wifi is in the other mode
-  if (!parseWeather(weather)) { return; } // No change in weather
+  if (weather.length() < 3) { return; } // Something went wrong
+  
+  Serial.println(weather);
+  
+  if (weather.startsWith("ERR"))  { _blinker->Blink(Blink_Short); }
+  if (weather.startsWith("CLI"))  { _blinker->Blink(Blink_Cycle); }
+  if (weather.startsWith("OK!"))  { _blinker->Blink(Blink_Solid); }
+
+  parseWeather(weather);
 }
 
 bool CONTROLLER::parseWeather(String weather) {
@@ -122,11 +146,11 @@ bool CONTROLLER::parseWeather(String weather) {
 }
 
 void CONTROLLER::powerOn() {
-    digitalWrite(Powerpin, HIGH);    // sets the MOSFET on
+    digitalWrite(PowerPin, HIGH);    // sets the MOSFET on
     _servo->attach(ServoPin);
     if (_servo->read() == 0) { _servo->write(ServoMid,10,false); };
-    _dht->begin();                  //Todo: Check we can run these more than once
-    _led->begin();
+    _dht->begin();                  
+    _led->begin();                //Todo: This calls wire.begin, any issues doing that?
     _led->SetCurrentRGB(1,1,1);
     _led->SetOffTimesRGB(0x50, 0x52,0x50);
     _led->SetDimmingLevel(0);       // Off
@@ -135,18 +159,18 @@ void CONTROLLER::powerOn() {
 void CONTROLLER::powerOff() {
     _servo->stop();
     _servo->detach();
-    digitalWrite(Powerpin, LOW);    // sets the MOSFET off
+    digitalWrite(PowerPin, LOW);    // sets the MOSFET off
 }
 
 void CONTROLLER::lininoOn() {
-    digitalWrite(LininoPin, LOW);    // sets the Linino off
+    digitalWrite(LininoPin, HIGH);    // sets the Linino off
 }
 
 void CONTROLLER::lininoOff() {
-    digitalWrite(LininoPin, HIGH);    // sets the Linino on
+    digitalWrite(LininoPin, LOW);    // sets the Linino on
 }
 
-bool CONTROLLER::lininoRunning() {
+bool CONTROLLER::isLininoRunning() {
   // See https://gist.github.com/wayoda/db3c023417757f726088
     return digitalRead(HandshakePin);
 }
@@ -177,5 +201,21 @@ void CONTROLLER::sleep() {
 }
 
 void CONTROLLER::wake() {
+    //Called by interupt, keep as short as possible
     knock = true;
+}
+
+void CONTROLLER::acknowledge() {
+   //let user know something is happening
+   digitalWrite(LEDPin, HIGH);
+   delay(200);
+   digitalWrite(LEDPin, LOW);
+   delay(200);
+   digitalWrite(LEDPin, HIGH);
+   delay(200);
+   digitalWrite(LEDPin, LOW);
+   delay(200);   
+   digitalWrite(LEDPin, HIGH);
+   delay(200);
+   digitalWrite(LEDPin, LOW);
 }
