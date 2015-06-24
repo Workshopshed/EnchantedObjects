@@ -4,6 +4,7 @@ import pycurl
 import json, sys, urllib, urlparse
 import subprocess
 import serial
+import os,signal,sys
 from parse import *
 
 
@@ -146,7 +147,6 @@ def getWifiStatus():
 
     return p
 
-
 def getWeather(humid, temp):
     try:
         w = getWifiStatus()
@@ -189,7 +189,7 @@ def main():
         # Baudrate needs to be mirrored on ATMega side
         ser = serial.Serial('/dev/ttyATH0', 115200, timeout=60*60,writeTimeout=60*60)
     except:
-        exit(1)  # quit as we can't start the serial port
+        return(1)  # quit as we can't start the serial port
 
     line = ser.readline()  # read a '\n' terminated line
 
@@ -202,7 +202,16 @@ def main():
 
     print("timeout")
     ser.close()
+    return(0)
+
+# Handle exit and kill from OS
+def set_exit_handler(func):
+    signal.signal(signal.SIGTERM, func)
+def on_exit(sig, func=None):
+    print "exit handler triggered"
+    sys.exit(1)
 
 # Run program
 if __name__ == '__main__':
+    set_exit_handler(on_exit)
     sys.exit(main())

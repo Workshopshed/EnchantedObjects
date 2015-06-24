@@ -16,12 +16,15 @@ class CONTROLLER {
   VarSpeedServo *_servo;
   InfineonRGB *_led;
   Blinker *_blinker;
-  const uint8_t powerpin = 11;
+  const uint8_t powerpin = 12;
   const uint8_t servoPin = 9;
   const uint8_t LininoPin = A5;
   const uint8_t HandshakePin = 7;
   const uint8_t ButtonWifiPin = A0;
   const uint8_t ButtonPowerPin = A1;
+  const uint8_t ServoMin = 58;
+  const uint8_t ServoMax = 95;
+  const uint8_t ServoMid = ServoMin + ((ServoMax-ServoMin)/2);
   uint8_t position;
   void powerOn();
   void powerOff();

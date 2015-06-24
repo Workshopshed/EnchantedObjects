@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+# Initialise Python Listening on Serial Port
+
+workdir=/mnt/sda1/Python
+START=8
+STOP=14
+ 
+start() {
+    cd $workdir
+    /usr/bin/python /mnt/sda1/Python/GetWeather.py &
+    echo "Weather Server started."
+}
+ 
+stop() {
+    pid=`ps | grep '[p]ython /mnt/sda1/Python/GetWeather.py' | awk '{ print $1 }'`
+    echo $pid
+    kill $pid
+    sleep 2
+    echo "Weather Server killed."
+}
+ 
+
