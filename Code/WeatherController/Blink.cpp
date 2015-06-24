@@ -9,9 +9,6 @@ Blinker::Blinker(unsigned int onLevel, unsigned int offLevel) {
 
 unsigned long Blinker::Level(void)
 {
-  if (_offDuration == 0) { return _onLevel;}
-  if (_onDuration == 0)  { return _offLevel;}
-
   if (_iTimeout < millis()) {
     if (_state == 0) {
      _iTimeout = millis() + _onDuration;
@@ -21,6 +18,9 @@ unsigned long Blinker::Level(void)
     }
     _state = !_state; 
   }
+
+  if (_offDuration == 0) { return _onLevel;}
+  if (_onDuration == 0)  { return _offLevel;}
   
   if (_state == 0) { return _offLevel; }
   return _onLevel;
@@ -32,20 +32,20 @@ void Blinker::Blink(uint8_t Mode)
   _mode = Mode;
   switch (Mode) {
     case Blink_Short:
-        _onDuration = 250;
-        _offDuration = 250;
+        _onDuration = 500;
+        _offDuration = 500;
         break;
     case Blink_Long:
-        _onDuration = 1000;
-        _offDuration = 2000;
-      break;
+        _onDuration = 200;
+        _offDuration = 1500;
+        break;
     case Blink_Off:
         _onDuration = 0;  
         _offDuration = 1000;  // Time does not matter for this but need to be > 0
         break;
     default: //Solid_Blink + 
         _offDuration = 0;
-        _onDuration = 1000;  // Time used to determine the colour cycle frequency
+        _onDuration = 150;  // Time used to determine the colour cycle frequency
   }   
 }
 
@@ -60,7 +60,6 @@ uint8_t Blinker::GetColour(void){
   
   if (_iTimeout < millis()) {
     _colour = (_colour + 1) % (ColourMax+1);
-    _iTimeout = millis() + _onDuration;
   }
 
   return _colour;    
