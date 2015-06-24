@@ -1,4 +1,5 @@
 #include "Blink.h"
+#include "infineonrgb.h"
 
 Blinker::Blinker(unsigned int onLevel, unsigned int offLevel) {
     _onLevel = onLevel;
@@ -40,3 +41,17 @@ void Blinker::Blink(uint8_t Mode)
         _offDuration = 0;
   }   
 }
+
+
+void Blinker::SetColour(uint8_t Colour)
+//Uses the colours from infineorgb.h
+{
+  _colour = Colour;
+}
+
+uint8_t Blinker::GetColour(void){
+  //todo: Implement colour cycling
+  return _colour;
+}
+
+

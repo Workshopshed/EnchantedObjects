@@ -18,6 +18,22 @@ void CONTROLLER::begin() {
 }
 
 void CONTROLLER::run(void) {
+  /*
+  todo: Add a state model to make this coding easier
+  
+  When the board wakes up it checks to see if the sleep counter has reached zero or if knock has been detected and if so It starts up. Otherwise it goes back to sleep for another 4seconds.
+  In start up it firstly powers on the peripherals and WiFi module. It then sets the LED colour to be that of the last known temperature.
+  Following this it sets the LED to fast flash to indicate it's going to get the weather. It then gets the local temperature and humidity.
+  Once the WiFi module has booted it will request the weather.
+  On the Linino side the system sends a handshake signal to indicate that it is ready and starts up the Python script to listen to the serial port.
+  The Python script makes an API call to the Yahoo weather service, if that errors or times out it will make a "guess" at the weather based on the local conditions provided by the sensor.
+  The data is parsed and send back to the ATmega as a simple string.
+  Once the weather has been received the system shuts down the WiFi module. It can then update the position and new LED colour which is then solid and starts a timer for 1 minute.
+  sleeps = 900; // (60/4)*60 = 60 minutes of sleep
+  Once that timer has expired it will shut down the peripherals and go back to sleep.
+  */
+  
+  
     if (sleeps <= 0 || knock)
     {
         //Todo: Implement asynchronous request / read etc, perhaps a statemodel
@@ -28,8 +44,7 @@ void CONTROLLER::run(void) {
           readNetWeather();
           moveServo();
           setLED();
-          //Todo: Timeout and go to sleep
-          //      sleeps = 900; // (60/4)*60 = 60 minutes of sleep
+    
     }
     else
     {
@@ -137,24 +152,16 @@ void CONTROLLER::moveServo() {
 }
 
 void CONTROLLER::setLED() {
-     //Todo: If colour cycle then get colour from the blinker else get colour from temp
-  
-     if (nettemp <= 0)                  { _led->SetColor(White);  }
-     if (nettemp > 0  && nettemp <= 5)  { _led->SetColor(Purple); }
-     if (nettemp > 5  && nettemp <= 10) { _led->SetColor(Blue);   }
-     if (nettemp > 10 && nettemp <= 15) { _led->SetColor(Green);  }
-     if (nettemp > 15 && nettemp <= 25) { _led->SetColor(Yellow); }
-     if (nettemp > 25 && nettemp <= 30) { _led->SetColor(Orange); }
-     if (nettemp > 30 )                 { _led->SetColor(Red);    }
+     if (nettemp <= 0)                  { _blinker->SetColour(White);  }
+     if (nettemp > 0  && nettemp <= 5)  { _blinker->SetColour(Purple); }
+     if (nettemp > 5  && nettemp <= 10) { _blinker->SetColour(Blue);   }
+     if (nettemp > 10 && nettemp <= 15) { _blinker->SetColour(Green);  }
+     if (nettemp > 15 && nettemp <= 25) { _blinker->SetColour(Yellow); }
+     if (nettemp > 25 && nettemp <= 30) { _blinker->SetColour(Orange); }
+     if (nettemp > 30 )                 { _blinker->SetColour(Red);    }
 
      _led->SetDimmingLevel(_blinker->Level());
-     
-      /* Todo: (should be handled by blinker)
-    Off            Off / Sleeping
-    Slow Flash	   Booting / Getting data
-    Quick Flash    Error (Using Historic or Local Data)
-    Colour cycle   Needs configuring
-     */
+     _led->SetColor(_blinker->GetColour());
 }
 
 void CONTROLLER::sleep() {
