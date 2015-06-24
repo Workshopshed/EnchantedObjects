@@ -197,7 +197,7 @@ def main():
         l = processSerial(line)
         w = getWeather(l['humid'], l['temp'])
         print (w)              # Write to Console, for testing
-        ser.write(w)
+        ser.write(w.encode('utf-8'))
         line = ser.readline()  # read next line
 
     print("timeout")
