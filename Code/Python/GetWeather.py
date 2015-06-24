@@ -156,14 +156,14 @@ def getWeather(humid, temp):
             r = call_api(weather_url)
             j = json.loads(r)
             weather = parse_weather(j)
+            return 'OK!,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
         else:
             weather = guess_weather(humid, temp)
-
-        return 'OK!,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
+            return 'CLI,%s,%s,%4.2f' % (weather['text'], weather['code'], weather['temp'])
 
     except Exception, err:
         weather = guess_weather(humid, temp)
-        return 'Err,%s,%s,%4.2f' % (str(err).replace(",", " "), weather['code'], weather['temp'])
+        return 'ERR,%s,%s,%4.2f' % (str(err).replace(",", " "), weather['code'], weather['temp'])
 
 
 def processSerial(line):
