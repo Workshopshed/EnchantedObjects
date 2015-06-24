@@ -9,6 +9,7 @@ Blinker::Blinker(unsigned int onLevel, unsigned int offLevel) {
 unsigned long Blinker::Level(void)
 {
   if (_offDuration == 0) { return _onLevel;}
+  if (_onDuration == 0)  { return _offLevel;}
 
   if (iTimeout < millis()) {
     if (_state == 0) {
@@ -36,7 +37,23 @@ void Blinker::Blink(uint8_t Mode)
         _onDuration = 1000;
         _offDuration = 2000;
       break;
+    case Off:
+        _onDuration = 0;
     default: //Solid_Blink
         _offDuration = 0;
   }   
 }
+
+
+void Blinker::SetColour(uint8_t Colour)
+//Uses the colours from infineorgb.h
+{
+  _colour = Colour;
+}
+
+uint8_t Blinker::GetColour(void){
+  //todo: Implement colour cycling
+  return _colour;
+}
+
+
