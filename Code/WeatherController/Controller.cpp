@@ -7,21 +7,24 @@ CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *se
   _serial = serial;
   _blinker = blinker;
   position = 3; // Middle position
+  knock = false;
 }
 
 void CONTROLLER::begin() {
     pinMode(LininoPin, OUTPUT);
-    pinMode(powerpin, OUTPUT);
+    pinMode(Powerpin, OUTPUT);
     pinMode(HandshakePin, INPUT);
     pinMode(ButtonPowerPin, INPUT_PULLUP);
     pinMode(ButtonWifiPin, INPUT_PULLUP);
+    //Servo pin is handled by 
 }
 
 void CONTROLLER::run(void) {
   /*
   todo: Add a state model to make this coding easier
   
-  When the board wakes up it checks to see if the sleep counter has reached zero or if knock has been detected and if so It starts up. Otherwise it goes back to sleep for another 4seconds.
+  When the board wakes up it checks to see if the sleep counter has reached zero or if knock has been detected and if so It starts up.
+  Otherwise it goes back to sleep for another 4 seconds.
   In start up it firstly powers on the peripherals and WiFi module. It then sets the LED colour to be that of the last known temperature.
   Following this it sets the LED to fast flash to indicate it's going to get the weather. It then gets the local temperature and humidity.
   Once the WiFi module has booted it will request the weather.
@@ -36,6 +39,7 @@ void CONTROLLER::run(void) {
   
     if (sleeps <= 0 || knock)
     {
+        knock = false;
         //Todo: Implement asynchronous request / read etc, perhaps a statemodel
           lininoOn();
           powerOn();
@@ -64,7 +68,7 @@ void CONTROLLER::readLocalWeather() {
 };
 
 void CONTROLLER::requestNetWeather() {
-  //Request new forcast
+  //Request new forecast
   _serial->print("OK!,");
   _serial->print(localtemp);
   _serial->print(",");
@@ -72,9 +76,13 @@ void CONTROLLER::requestNetWeather() {
   _serial->print("\n");
 }
 
+
+bool CONTROLLER::isReadyNetWeather() {
+   return (_serial->available() > 6); 
+}
+
 void CONTROLLER::readNetWeather() {
-  // Todo: this is a blocking read, we have to wait for the weather, need to break out
-  
+  // This is a blocking read so call isReadyNetWeather() first;
   // Read weather over /dev/ttyATH0<->Serial1
   String weather = _serial->readStringUntil('\n');
   
@@ -110,13 +118,12 @@ bool CONTROLLER::parseWeather(String weather) {
       nettemp = tempTemp;
     }
   }
-  
   return changed;
 }
 
 void CONTROLLER::powerOn() {
-    digitalWrite(powerpin, HIGH);    // sets the MOSFET on
-    _servo->attach(servoPin);
+    digitalWrite(Powerpin, HIGH);    // sets the MOSFET on
+    _servo->attach(ServoPin);
     if (_servo->read() == 0) { _servo->write(ServoMid,10,false); };
     _dht->begin();                  //Todo: Check we can run these more than once
     _led->begin();
@@ -128,7 +135,7 @@ void CONTROLLER::powerOn() {
 void CONTROLLER::powerOff() {
     _servo->stop();
     _servo->detach();
-    digitalWrite(powerpin, LOW);    // sets the MOSFET off
+    digitalWrite(Powerpin, LOW);    // sets the MOSFET off
 }
 
 void CONTROLLER::lininoOn() {
