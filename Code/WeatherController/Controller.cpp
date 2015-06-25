@@ -6,7 +6,7 @@ CONTROLLER::CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *se
   _led = led;
   _serial = serial;
   _blinker = blinker;
-  position = 3; // Middle position
+  position = 1; // Middle position
   knock = false;
 }
 
@@ -17,8 +17,7 @@ void CONTROLLER::begin() {
     pinMode(HandshakePin, INPUT);
     pinMode(ButtonPowerPin, INPUT_PULLUP);
     pinMode(ButtonWifiPin, INPUT_PULLUP);
-    
-    
+    _blinker->SetColour(White);
     //Servo pin is handled by servo attach
 }
 
@@ -55,7 +54,7 @@ void CONTROLLER::run(void) {
           case C_GettingWeather:
               if (isReadyNetWeather()) {
                 Serial.println("Parsing Weather");
-                readNetWeather();
+                if (!readNetWeather()) { break;} 
                 lininoOff();
                 moveServo();
                 state = C_Display;
@@ -85,6 +84,8 @@ void CONTROLLER::readLocalWeather() {
 };
 
 void CONTROLLER::requestNetWeather() {
+  delay(250); //Give Python time to start up
+  flushserial();
   //Request new forecast
   _serial->print("OK!,");
   _serial->print(localtemp);
@@ -98,13 +99,26 @@ bool CONTROLLER::isReadyNetWeather() {
    return (_serial->available() > 0); 
 }
 
-void CONTROLLER::readNetWeather() {
+bool CONTROLLER::readNetWeather() {
   // This is a blocking read so call isReadyNetWeather() first;
   // Read weather over /dev/ttyATH0<->Serial1
   String weather = _serial->readStringUntil('\n');
   
   //String weather = "OK!,Cloudy,3,19.00"; //Check,Status,Position,Temperature
-  if (weather.length() < 3) { return; } // Something went wrong
+
+  //Not enought data
+  if (weather.length() < 3) {  // Something went wrong
+      state = C_Booting; //Try again
+      _blinker->Blink(Blink_Short);
+      return false;
+  } 
+  
+  //Data garbled
+  if (!weather.startsWith("OK!") && !weather.startsWith("CLI") && !weather.startsWith("CLI")) {
+      state = C_Booting; //Try again
+      _blinker->Blink(Blink_Short);
+      return false;
+  }     
   
   Serial.println(weather);
   
@@ -113,6 +127,8 @@ void CONTROLLER::readNetWeather() {
   if (weather.startsWith("OK!"))  { _blinker->Blink(Blink_Solid); }
 
   parseWeather(weather);
+  
+  return true;
 }
 
 bool CONTROLLER::parseWeather(String weather) {
@@ -167,7 +183,8 @@ void CONTROLLER::lininoOn() {
 }
 
 void CONTROLLER::lininoOff() {
-    digitalWrite(LininoPin, LOW);    // sets the Linino on
+    if (!digitalRead(ButtonPowerPin)) {return;} // Don't power off if the power button is pressed
+    //digitalWrite(LininoPin, LOW);    // sets the Linino on
 }
 
 bool CONTROLLER::isLininoRunning() {
@@ -218,4 +235,10 @@ void CONTROLLER::acknowledge() {
    digitalWrite(LEDPin, HIGH);
    delay(200);
    digitalWrite(LEDPin, LOW);
+}
+
+void CONTROLLER::flushserial() {
+    while (_serial->available()) {
+     int inByte = _serial->read();
+   }
 }

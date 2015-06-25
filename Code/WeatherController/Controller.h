@@ -40,12 +40,13 @@ typedef enum{
   void readLocalWeather();
   void requestNetWeather();
   bool isReadyNetWeather();
-  void readNetWeather();
+  bool readNetWeather();
   bool parseWeather(String weather);
   void moveServo();
   void setLED();
   void sleep();
   void acknowledge();
+  void flushserial();
  public:
   CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *serial,Blinker *blinker);
   void begin();
