@@ -14,12 +14,17 @@ const int knockPin = 11;
 DHT dht(DHTPIN, DHTTYPE);
 VarSpeedServo servo;
 InfineonRGB led;
-Blinker blinker(0x0777,0);
+Blinker blinker(0x0777,1);
 
 CONTROLLER Controller(&dht,&servo,&led,&Serial1,&blinker);
 
 void setup() {
   power_adc_disable();          //Not using any analogue functionality so can turn it off
+  Serial.begin(115200);
+  while (!Serial) {
+     ; // wait for serial port to connect.
+   }
+  
   Serial1.begin(115200);
   Controller.begin();
   enableInterrupt(knockPin, knock, CHANGE);

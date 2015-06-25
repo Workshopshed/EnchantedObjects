@@ -8,16 +8,22 @@ class CONTROLLER {
  private:
   float localtemp;
   float nettemp;
-  uint8_t localhumidity;
+  float localhumidity;
   int sleeps;
+  uint8_t state;
+typedef enum{
+  C_Sleeping,C_WakeUp,C_Booting,C_GettingWeather,C_Display	
+  } States;  
+  unsigned long _DisplayTimeout;
   volatile bool knock; 
   DHT *_dht;
   Stream *_serial;
   VarSpeedServo *_servo;
   InfineonRGB *_led;
   Blinker *_blinker;
-  const uint8_t powerpin = 12;
-  const uint8_t servoPin = 9;
+  const uint8_t LEDPin = 13;
+  const uint8_t PowerPin = 12;
+  const uint8_t ServoPin = 9;
   const uint8_t LininoPin = A5;
   const uint8_t HandshakePin = 7;
   const uint8_t ButtonWifiPin = A0;
@@ -30,15 +36,17 @@ class CONTROLLER {
   void powerOff();
   void lininoOn();
   void lininoOff();
-  bool lininoRunning();
+  bool isLininoRunning();
   void readLocalWeather();
   void requestNetWeather();
-  void readNetWeather();
+  bool isReadyNetWeather();
+  bool readNetWeather();
   bool parseWeather(String weather);
   void moveServo();
   void setLED();
   void sleep();
-
+  void acknowledge();
+  void flushserial();
  public:
   CONTROLLER(DHT *dht,VarSpeedServo *servo,InfineonRGB *led,Stream *serial,Blinker *blinker);
   void begin();
