@@ -8225,7 +8225,7 @@ And Charger</text>
 <text x="119.38" y="203.2" size="2.54" layer="91">Knock Knock
 Sensor</text>
 <text x="254" y="139.7" size="2.54" layer="91">Servo</text>
-<text x="231.14" y="185.42" size="2.54" layer="91">Temperature and Hunidity</text>
+<text x="241.3" y="185.42" size="2.54" layer="91">Temperature and Hunidity</text>
 <text x="99.06" y="137.16" size="2.54" layer="91">RGB LED</text>
 <text x="73.66" y="81.28" size="2.54" layer="91">Battery Management</text>
 <text x="172.72" y="71.12" size="2.54" layer="91">Top Panel</text>
@@ -8251,10 +8251,10 @@ Sensor</text>
 <instance part="D3" gate="G$1" x="251.46" y="71.12" rot="R90"/>
 <instance part="PCB1" gate="G$1" x="182.88" y="119.38"/>
 <instance part="LED1" gate="G$1" x="63.5" y="116.84" rot="R270"/>
-<instance part="DHT22" gate="G$1" x="233.68" y="165.1"/>
-<instance part="P+5" gate="VCC" x="223.52" y="187.96"/>
-<instance part="P+6" gate="VCC" x="215.9" y="187.96"/>
-<instance part="R6" gate="G$1" x="215.9" y="177.8" rot="R90"/>
+<instance part="DHT22" gate="G$1" x="243.84" y="165.1"/>
+<instance part="P+5" gate="VCC" x="233.68" y="187.96"/>
+<instance part="P+6" gate="VCC" x="226.06" y="187.96"/>
+<instance part="R6" gate="G$1" x="226.06" y="177.8" rot="R90"/>
 <instance part="SERVO" gate="A" x="256.54" y="127"/>
 <instance part="P+7" gate="VCC" x="246.38" y="139.7"/>
 <instance part="R7" gate="G$1" x="190.5" y="149.86" rot="R90"/>
@@ -8366,7 +8366,7 @@ Sensor</text>
 <segment>
 <pinref part="DHT22" gate="G$1" pin="VDD"/>
 <pinref part="P+5" gate="VCC" pin="VCC"/>
-<wire x1="223.52" y1="172.72" x2="223.52" y2="185.42" width="0.1524" layer="91"/>
+<wire x1="233.68" y1="172.72" x2="233.68" y2="185.42" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="SERVO" gate="A" pin="1"/>
@@ -8441,24 +8441,25 @@ Sensor</text>
 <pinref part="D3" gate="G$1" pin="A"/>
 <wire x1="251.46" y1="68.58" x2="251.46" y2="63.5" width="0.1524" layer="91"/>
 <junction x="243.84" y="63.5"/>
-<label x="231.14" y="66.04" size="1.778" layer="95"/>
-<label x="231.14" y="66.04" size="1.778" layer="95"/>
 <wire x1="243.84" y1="63.5" x2="233.68" y2="63.5" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="DHT22" gate="G$1" pin="GND"/>
-<wire x1="223.52" y1="154.94" x2="223.52" y2="157.48" width="0.1524" layer="91"/>
-<label x="223.52" y="152.4" size="1.778" layer="95" rot="R180"/>
+<label x="233.68" y="63.5" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="SERVO" gate="A" pin="3"/>
 <wire x1="254" y1="124.46" x2="246.38" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="124.46" x2="246.38" y2="116.84" width="0.1524" layer="91"/>
-<label x="238.76" y="114.3" size="1.778" layer="95"/>
+<wire x1="246.38" y1="116.84" x2="241.3" y2="116.84" width="0.1524" layer="91"/>
+<label x="241.3" y="116.84" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<wire x1="86.36" y1="104.14" x2="86.36" y2="99.06" width="0.1524" layer="91"/>
-<label x="78.74" y="96.52" size="1.778" layer="95"/>
+<wire x1="86.36" y1="104.14" x2="86.36" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="93.98" x2="81.28" y2="93.98" width="0.1524" layer="91"/>
+<label x="81.28" y="93.98" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="DHT22" gate="G$1" pin="GND"/>
+<wire x1="233.68" y1="157.48" x2="226.06" y2="157.48" width="0.1524" layer="91"/>
+<label x="226.06" y="157.48" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$6" class="0">
@@ -8479,32 +8480,34 @@ Sensor</text>
 <net name="TEMPSENSOR" class="0">
 <segment>
 <pinref part="DHT22" gate="G$1" pin="DATA"/>
-<wire x1="223.52" y1="167.64" x2="215.9" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="233.68" y1="167.64" x2="226.06" y2="167.64" width="0.1524" layer="91"/>
 <pinref part="PCB1" gate="G$1" pin="4"/>
-<wire x1="215.9" y1="167.64" x2="198.12" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="226.06" y1="167.64" x2="198.12" y2="167.64" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="167.64" x2="198.12" y2="139.7" width="0.1524" layer="91"/>
 <label x="198.12" y="170.18" size="1.778" layer="95"/>
 <pinref part="R6" gate="G$1" pin="1"/>
-<wire x1="215.9" y1="172.72" x2="215.9" y2="167.64" width="0.1524" layer="91"/>
-<junction x="215.9" y="167.64"/>
+<wire x1="226.06" y1="172.72" x2="226.06" y2="167.64" width="0.1524" layer="91"/>
+<junction x="226.06" y="167.64"/>
 </segment>
 </net>
 <net name="N$7" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
-<wire x1="215.9" y1="182.88" x2="215.9" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="226.06" y1="182.88" x2="226.06" y2="185.42" width="0.1524" layer="91"/>
+<pinref part="P+6" gate="VCC" pin="VCC"/>
+<wire x1="226.06" y1="185.42" x2="226.06" y2="187.96" width="0.1524" layer="91"/>
+<junction x="226.06" y="185.42"/>
 </segment>
 </net>
 <net name="SERVO" class="0">
 <segment>
-<pinref part="SERVO" gate="A" pin="2"/>
-<wire x1="254" y1="127" x2="228.6" y2="127" width="0.1524" layer="91"/>
-<label x="228.6" y="127" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="PCB1" gate="G$1" pin="~9"/>
 <wire x1="180.34" y1="144.78" x2="180.34" y2="139.7" width="0.1524" layer="91"/>
-<label x="177.8" y="144.78" size="1.778" layer="95"/>
+<label x="180.34" y="144.78" size="1.778" layer="95" rot="R90" xref="yes"/>
+</segment>
+<segment>
+<wire x1="256.54" y1="127" x2="238.76" y2="127" width="0.1524" layer="91"/>
+<label x="238.76" y="127" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="POWERON" class="0">
@@ -8512,12 +8515,12 @@ Sensor</text>
 <pinref part="PCB1" gate="G$1" pin="12"/>
 <wire x1="172.72" y1="139.7" x2="172.72" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="142.24" x2="167.64" y2="147.32" width="0.1524" layer="91"/>
-<label x="160.02" y="147.32" size="1.778" layer="95"/>
+<label x="167.64" y="147.32" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="R4" gate="G$1" pin="1"/>
 <wire x1="213.36" y1="53.34" x2="218.44" y2="53.34" width="0.1524" layer="91"/>
-<label x="215.9" y="55.88" size="1.778" layer="95" rot="R180"/>
+<label x="213.36" y="53.34" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$2" class="0">
