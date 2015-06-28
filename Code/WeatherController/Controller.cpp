@@ -66,8 +66,8 @@ void CONTROLLER::run(void) {
                Serial.println("Back to sleep");
                _blinker->Blink(Blink_Off);
                powerOff();
-               sleeps = 15; //1 min
-               //sleeps = 900; // (60/4)*60 = 60 minutes of sleep
+               //sleeps = 15; //1 min
+               sleeps = 900; // (60/4)*60 = 60 minutes of sleep
                knock = false;               
                state = C_Sleeping;
              }
@@ -179,12 +179,12 @@ void CONTROLLER::powerOff() {
 }
 
 void CONTROLLER::lininoOn() {
-    digitalWrite(LininoPin, HIGH);    // sets the Linino off
+    digitalWrite(LininoPin, HIGH);    // sets the Linino on
 }
 
 void CONTROLLER::lininoOff() {
     if (!digitalRead(ButtonPowerPin)) {return;} // Don't power off if the power button is pressed
-    //digitalWrite(LininoPin, LOW);    // sets the Linino on
+    digitalWrite(LininoPin, LOW);    // sets the Linino off
 }
 
 bool CONTROLLER::isLininoRunning() {
