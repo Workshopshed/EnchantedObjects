@@ -150,7 +150,7 @@ bool CONTROLLER::parseWeather(String weather) {
     }
   }
 
-  String sTemp = weather.substring(c3);
+  String sTemp = weather.substring(c3+1);
   float tempTemp = sTemp.toFloat();
   if (tempTemp != 0) {
     if (nettemp != tempTemp) {
